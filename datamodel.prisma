@@ -1,4 +1,7 @@
-type User {
+type Collection {
   id: ID! @unique
+  owner: Int!
   name: String!
+  private: Boolean! @default(value: "true")
+  items: [Int!]!
 }

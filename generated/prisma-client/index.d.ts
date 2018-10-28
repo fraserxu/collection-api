@@ -11,7 +11,7 @@ type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
   U[keyof U];
 
 export interface Exists {
-  user: (where?: UserWhereInput) => Promise<boolean>;
+  collection: (where?: CollectionWhereInput) => Promise<boolean>;
 }
 
 export interface Node {}
@@ -33,51 +33,51 @@ export interface Prisma {
    * Queries
    */
 
-  user: (where: UserWhereUniqueInput) => User;
-  users: (
+  collection: (where: CollectionWhereUniqueInput) => Collection;
+  collections: (
     args?: {
-      where?: UserWhereInput;
-      orderBy?: UserOrderByInput;
+      where?: CollectionWhereInput;
+      orderBy?: CollectionOrderByInput;
       skip?: Int;
       after?: String;
       before?: String;
       first?: Int;
       last?: Int;
     }
-  ) => FragmentableArray<UserNode>;
-  usersConnection: (
+  ) => FragmentableArray<CollectionNode>;
+  collectionsConnection: (
     args?: {
-      where?: UserWhereInput;
-      orderBy?: UserOrderByInput;
+      where?: CollectionWhereInput;
+      orderBy?: CollectionOrderByInput;
       skip?: Int;
       after?: String;
       before?: String;
       first?: Int;
       last?: Int;
     }
-  ) => UserConnection;
+  ) => CollectionConnection;
   node: (args: { id: ID_Output }) => Node;
 
   /**
    * Mutations
    */
 
-  createUser: (data: UserCreateInput) => User;
-  updateUser: (
-    args: { data: UserUpdateInput; where: UserWhereUniqueInput }
-  ) => User;
-  updateManyUsers: (
-    args: { data: UserUpdateInput; where?: UserWhereInput }
+  createCollection: (data: CollectionCreateInput) => Collection;
+  updateCollection: (
+    args: { data: CollectionUpdateInput; where: CollectionWhereUniqueInput }
+  ) => Collection;
+  updateManyCollections: (
+    args: { data: CollectionUpdateInput; where?: CollectionWhereInput }
   ) => BatchPayload;
-  upsertUser: (
+  upsertCollection: (
     args: {
-      where: UserWhereUniqueInput;
-      create: UserCreateInput;
-      update: UserUpdateInput;
+      where: CollectionWhereUniqueInput;
+      create: CollectionCreateInput;
+      update: CollectionUpdateInput;
     }
-  ) => User;
-  deleteUser: (where: UserWhereUniqueInput) => User;
-  deleteManyUsers: (where?: UserWhereInput) => BatchPayload;
+  ) => Collection;
+  deleteCollection: (where: CollectionWhereUniqueInput) => Collection;
+  deleteManyCollections: (where?: CollectionWhereInput) => BatchPayload;
 
   /**
    * Subscriptions
@@ -87,9 +87,9 @@ export interface Prisma {
 }
 
 export interface Subscription {
-  user: (
-    where?: UserSubscriptionWhereInput
-  ) => UserSubscriptionPayloadSubscription;
+  collection: (
+    where?: CollectionSubscriptionWhereInput
+  ) => CollectionSubscriptionPayloadSubscription;
 }
 
 export interface ClientConstructor<T> {
@@ -100,11 +100,15 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type UserOrderByInput =
+export type CollectionOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "owner_ASC"
+  | "owner_DESC"
   | "name_ASC"
   | "name_DESC"
+  | "private_ASC"
+  | "private_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -112,15 +116,18 @@ export type UserOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export interface UserCreateInput {
+export interface CollectionCreateInput {
+  owner: Int;
   name: String;
+  private?: Boolean;
+  items?: CollectionCreateitemsInput;
 }
 
-export interface UserUpdateInput {
-  name?: String;
+export interface CollectionCreateitemsInput {
+  set?: Int[] | Int;
 }
 
-export interface UserWhereInput {
+export interface CollectionWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -135,6 +142,14 @@ export interface UserWhereInput {
   id_not_starts_with?: ID_Input;
   id_ends_with?: ID_Input;
   id_not_ends_with?: ID_Input;
+  owner?: Int;
+  owner_not?: Int;
+  owner_in?: Int[] | Int;
+  owner_not_in?: Int[] | Int;
+  owner_lt?: Int;
+  owner_lte?: Int;
+  owner_gt?: Int;
+  owner_gte?: Int;
   name?: String;
   name_not?: String;
   name_in?: String[] | String;
@@ -149,23 +164,36 @@ export interface UserWhereInput {
   name_not_starts_with?: String;
   name_ends_with?: String;
   name_not_ends_with?: String;
-  AND?: UserWhereInput[] | UserWhereInput;
-  OR?: UserWhereInput[] | UserWhereInput;
-  NOT?: UserWhereInput[] | UserWhereInput;
+  private?: Boolean;
+  private_not?: Boolean;
+  AND?: CollectionWhereInput[] | CollectionWhereInput;
+  OR?: CollectionWhereInput[] | CollectionWhereInput;
+  NOT?: CollectionWhereInput[] | CollectionWhereInput;
 }
 
-export interface UserSubscriptionWhereInput {
+export interface CollectionUpdateInput {
+  owner?: Int;
+  name?: String;
+  private?: Boolean;
+  items?: CollectionUpdateitemsInput;
+}
+
+export interface CollectionUpdateitemsInput {
+  set?: Int[] | Int;
+}
+
+export interface CollectionSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: UserWhereInput;
-  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  node?: CollectionWhereInput;
+  AND?: CollectionSubscriptionWhereInput[] | CollectionSubscriptionWhereInput;
+  OR?: CollectionSubscriptionWhereInput[] | CollectionSubscriptionWhereInput;
+  NOT?: CollectionSubscriptionWhereInput[] | CollectionSubscriptionWhereInput;
 }
 
-export type UserWhereUniqueInput = AtLeastOne<{
+export type CollectionWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
@@ -173,20 +201,20 @@ export interface NodeNode {
   id: ID_Output;
 }
 
-export interface UserEdgeNode {
-  cursor: String;
+export interface AggregateCollectionNode {
+  count: Int;
 }
 
-export interface UserEdge extends Promise<UserEdgeNode>, Fragmentable {
-  node: <T = User>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface UserEdgeSubscription
-  extends Promise<AsyncIterator<UserEdgeNode>>,
+export interface AggregateCollection
+  extends Promise<AggregateCollectionNode>,
     Fragmentable {
-  node: <T = UserSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  count: () => Promise<Int>;
+}
+
+export interface AggregateCollectionSubscription
+  extends Promise<AsyncIterator<AggregateCollectionNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface BatchPayloadNode {
@@ -203,81 +231,117 @@ export interface BatchPayloadSubscription
   count: () => Promise<AsyncIterator<Long>>;
 }
 
-export interface UserPreviousValuesNode {
+export interface CollectionPreviousValuesNode {
   id: ID_Output;
+  owner: Int;
   name: String;
+  private: Boolean;
+  items: Int[];
 }
 
-export interface UserPreviousValues
-  extends Promise<UserPreviousValuesNode>,
+export interface CollectionPreviousValues
+  extends Promise<CollectionPreviousValuesNode>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  owner: () => Promise<Int>;
   name: () => Promise<String>;
+  private: () => Promise<Boolean>;
+  items: () => Promise<Int[]>;
 }
 
-export interface UserPreviousValuesSubscription
-  extends Promise<AsyncIterator<UserPreviousValuesNode>>,
+export interface CollectionPreviousValuesSubscription
+  extends Promise<AsyncIterator<CollectionPreviousValuesNode>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  owner: () => Promise<AsyncIterator<Int>>;
   name: () => Promise<AsyncIterator<String>>;
+  private: () => Promise<AsyncIterator<Boolean>>;
+  items: () => Promise<AsyncIterator<Int[]>>;
 }
 
-export interface UserSubscriptionPayloadNode {
+export interface CollectionSubscriptionPayloadNode {
   mutation: MutationType;
   updatedFields?: String[];
 }
 
-export interface UserSubscriptionPayload
-  extends Promise<UserSubscriptionPayloadNode>,
+export interface CollectionSubscriptionPayload
+  extends Promise<CollectionSubscriptionPayloadNode>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = User>() => T;
+  node: <T = Collection>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = UserPreviousValues>() => T;
+  previousValues: <T = CollectionPreviousValues>() => T;
 }
 
-export interface UserSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<UserSubscriptionPayloadNode>>,
+export interface CollectionSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<CollectionSubscriptionPayloadNode>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = UserSubscription>() => T;
+  node: <T = CollectionSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = UserPreviousValuesSubscription>() => T;
+  previousValues: <T = CollectionPreviousValuesSubscription>() => T;
 }
 
-export interface UserNode {
+export interface CollectionNode {
   id: ID_Output;
+  owner: Int;
   name: String;
+  private: Boolean;
+  items: Int[];
 }
 
-export interface User extends Promise<UserNode>, Fragmentable {
+export interface Collection extends Promise<CollectionNode>, Fragmentable {
   id: () => Promise<ID_Output>;
+  owner: () => Promise<Int>;
   name: () => Promise<String>;
+  private: () => Promise<Boolean>;
+  items: () => Promise<Int[]>;
 }
 
-export interface UserSubscription
-  extends Promise<AsyncIterator<UserNode>>,
+export interface CollectionSubscription
+  extends Promise<AsyncIterator<CollectionNode>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  owner: () => Promise<AsyncIterator<Int>>;
   name: () => Promise<AsyncIterator<String>>;
+  private: () => Promise<AsyncIterator<Boolean>>;
+  items: () => Promise<AsyncIterator<Int[]>>;
 }
 
-export interface UserConnectionNode {}
+export interface CollectionEdgeNode {
+  cursor: String;
+}
 
-export interface UserConnection
-  extends Promise<UserConnectionNode>,
+export interface CollectionEdge
+  extends Promise<CollectionEdgeNode>,
+    Fragmentable {
+  node: <T = Collection>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface CollectionEdgeSubscription
+  extends Promise<AsyncIterator<CollectionEdgeNode>>,
+    Fragmentable {
+  node: <T = CollectionSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface CollectionConnectionNode {}
+
+export interface CollectionConnection
+  extends Promise<CollectionConnectionNode>,
     Fragmentable {
   pageInfo: <T = PageInfo>() => T;
-  edges: <T = FragmentableArray<UserEdgeNode>>() => T;
-  aggregate: <T = AggregateUser>() => T;
+  edges: <T = FragmentableArray<CollectionEdgeNode>>() => T;
+  aggregate: <T = AggregateCollection>() => T;
 }
 
-export interface UserConnectionSubscription
-  extends Promise<AsyncIterator<UserConnectionNode>>,
+export interface CollectionConnectionSubscription
+  extends Promise<AsyncIterator<CollectionConnectionNode>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUserSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<CollectionEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateCollectionSubscription>() => T;
 }
 
 export interface PageInfoNode {
@@ -303,34 +367,6 @@ export interface PageInfoSubscription
   endCursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateUserNode {
-  count: Int;
-}
-
-export interface AggregateUser
-  extends Promise<AggregateUserNode>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateUserSubscription
-  extends Promise<AsyncIterator<AggregateUserNode>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-/*
-The `Boolean` scalar type represents `true` or `false`.
-*/
-export type Boolean = boolean;
-
-/*
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
-*/
-export type String = string;
-
-export type Long = string;
-
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
 */
@@ -341,6 +377,18 @@ export type ID_Output = string;
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
 */
 export type Int = number;
+
+export type Long = string;
+
+/*
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+*/
+export type String = string;
+
+/*
+The `Boolean` scalar type represents `true` or `false`.
+*/
+export type Boolean = boolean;
 
 /**
  * Type Defs
